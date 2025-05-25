@@ -2,7 +2,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 typedef struct
 {
@@ -105,9 +104,63 @@ void imprimirLista(nodo* cabeza) {
     }
 }
 
-// mostrar publicacion ordenado por algo ej "me gusta", "comentarios", "compartidos"
+// insertar en alguna cosa
+void insertarEnPosicion(nodo** cabeza, publicacion dato, int posicion) {
+    nodo* nuevo = crearNodo(dato);
 
-void ordenarPorMeGusta(nodo* cabeza) {
+    if (posicion <= 1 || *cabeza == NULL) {
+        nuevo->siguiente = *cabeza;
+        *cabeza = nuevo;
+        return;
+    }
+
+    nodo* actual = *cabeza;
+    int i = 1;
+    while (i < posicion - 1 && actual->siguiente != NULL) {
+        actual = actual->siguiente;
+        i++;
+    }
+
+    nuevo->siguiente = actual->siguiente;
+    actual->siguiente = nuevo;
+}
+
+// eliminar por posicion 
+void eliminarEnPosicion(nodo** cabeza, int posicion) {
+    if (*cabeza == NULL || posicion < 1) {
+        printf("Lista vacía o posición inválida.\n");
+        return;
+    }
+
+    nodo* temp;
+
+    if (posicion == 1) {
+        temp = *cabeza;
+        *cabeza = (*cabeza)->siguiente;
+        free(temp);
+        return;
+    }
+
+    nodo* actual = *cabeza;
+    int i = 1;
+    while (i < posicion - 1 && actual->siguiente != NULL) {
+        actual = actual->siguiente;
+        i++;
+    }
+
+    if (actual->siguiente == NULL) {
+        printf("No existe esa posición.\n");
+        return;
+    }
+
+    temp = actual->siguiente;
+    actual->siguiente = temp->siguiente;
+    free(temp);
+}
+
+// mostrar publicacion ordenado por me gusta de mayor y menor
+
+void ordenarPorMeGustamayor(nodo* cabeza) {
     int cambio;
     nodo* actual;
     do {
@@ -125,35 +178,17 @@ void ordenarPorMeGusta(nodo* cabeza) {
     } while (cambio);
 }
 
-void ordenarPorComentarios(nodo* cabeza) {
+void ordenarPorMeGustamenor(nodo* cabeza) {
     int cambio;
     nodo* actual;
     do {
         cambio = 0;
         actual = cabeza;
         while (actual != NULL && actual->siguiente != NULL) {
-            if (actual->dato.comentario < actual->siguiente->dato.comentario) {
-                int temp = actual->dato.comentario;
-                actual->dato.comentario = actual->siguiente->dato.comentario;
-                actual->siguiente->dato.comentario = temp;
-                cambio = 1;
-            }
-            actual = actual->siguiente;
-        }
-    } while (cambio);
-}
-
-void ordenarPorCompartido(nodo* cabeza) {
-    int cambio;
-    nodo* actual;
-    do {
-        cambio = 0;
-        actual = cabeza;
-        while (actual != NULL && actual->siguiente != NULL) {
-            if (actual->dato.compartido < actual->siguiente->dato.compartido) {
-                int temp = actual->dato.compartido;
-                actual->dato.compartido = actual->siguiente->dato.compartido;
-                actual->siguiente->dato.compartido = temp;
+            if (actual->dato.me_gusta > actual->siguiente->dato.me_gusta) {
+                int temp = actual->dato.me_gusta;
+                actual->dato.me_gusta = actual->siguiente->dato.me_gusta;
+                actual->siguiente->dato.me_gusta = temp;
                 cambio = 1;
             }
             actual = actual->siguiente;
@@ -184,7 +219,6 @@ while (!feof(archivo)) {
     if (resultado == 7) {
         insertarFinal(&cabeza, p);
     } else {
-        // Limpia línea malformada
         fgets(linea, sizeof(linea), archivo);
     }
 }
@@ -198,10 +232,11 @@ fclose(archivo);
         printf("3. Quitar primera publicación\n");
         printf("4. Quitar última publicación\n");
         printf("5. Mostrar todas las publicaciones\n");
-        printf("6. Ordenar por me gusta\n");
-        printf("7. Ordenar por comentarios\n");
-        printf("8. Ordenar por compartido\n");
-        printf("9. Salir\n");
+        printf("6. Ordenar por 'me gusta' de manera ascendente\n");
+        printf("7. Ordenar por 'me gusta' de manera descendente\n");
+        printf("8. eliminar por orden \n");
+        printf("9. insertar por orden \n");
+        printf("10. cerrar aplicacion\n");
         printf("Seleccione una opción: ");
         scanf("%d", &opcion);
 
@@ -269,33 +304,62 @@ case 2:
                 imprimirLista(cabeza);
                 break;
 
+                
 case 6:
-    ordenarPorMeGusta(cabeza);
-    printf("Lista en orden decresciente por me gusta\n");
+        ordenarPorMeGustamenor(cabeza);
+    printf("Ordenar por 'me gusta' de manera ascendente\n");
     imprimirLista(cabeza);
     break;
 
 case 7:
-    ordenarPorComentarios(cabeza);
-    printf("Lista ordenada por comentarios.\n");
+    ordenarPorMeGustamayor(cabeza);
+    printf("Ordenar por 'me gusta' de manera descendente\n");
     imprimirLista(cabeza);
     break;
 
-case 8:
-    ordenarPorCompartido(cabeza);
-    printf("Lista ordenada por compartido.\n");
-    imprimirLista(cabeza);
+            case 8:
+    printf("Ingrese la posición a eliminar: ");
+    int posEliminar;
+    scanf("%d", &posEliminar);
+    eliminarEnPosicion(&cabeza, posEliminar);
     break;
 
-            case 9:
-                printf("Cerrar programa\n");
-                break;
+            case 9: {
+                int posInsertar;
+    printf("Ingrese la posición donde desea insertar: ");
+    scanf("%d", &posInsertar);
 
+    printf("ID: ");
+    scanf("%d", &p.ID);
+    getchar();
+
+    printf("Nombre: ");
+    fgets(p.nombre, sizeof(p.nombre), stdin);
+
+    printf("Título: ");
+    fgets(p.titulo, sizeof(p.titulo), stdin);
+
+    printf("Imagen: ");
+    fgets(p.imagen, sizeof(p.imagen), stdin);
+
+    printf("Me gusta: ");
+    scanf("%d", &p.me_gusta);
+    printf("Comentarios: ");
+    scanf("%d", &p.comentario);
+    printf("Compartido: ");
+    scanf("%d", &p.compartido);
+
+    insertarEnPosicion(&cabeza, p, posInsertar);
+    printf("Publicación insertada en la posición %d.\n", posInsertar);
+    break;}
+    case 10:
+    printf("Salir de la red social\n");
             default:
                 printf("Indique una opción valida\n");
                 break;
         }
-    } while (opcion != 9);
+    } while (opcion != 10);
 
     return 0;
 }
+
