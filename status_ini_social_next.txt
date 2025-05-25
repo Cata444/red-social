@@ -1,0 +1,4 @@
+3121134; Juan Garrido; #Feliz cumpleaños...; [foto_6.jpg]; [92, 4, 6];
+7561212; Francisca Zapata; #Haciendo deporte...; [foto_5.jpg]; [75, 6, 1];
+4334278; Pedro García; #Viaje a Europa; [foto_3.jpg, foto_4.jpg]; [46, 14, 4];
+1231232; Hugo Pérez; #Vacaciones en la playa; [foto_1.jpg, foto_2.jpg]; [23, 12, 2];
