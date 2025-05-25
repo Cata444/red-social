@@ -186,7 +186,7 @@ void ordenarPorMeGustamenor(nodo* cabeza) {
 // iniciamos el programa
 int main() {
     nodo* cabeza = NULL;
-    char linea[300];
+    char fotitos[100];
     int opcion, i;
     publicacion p;
 
@@ -224,7 +224,7 @@ fclose(archivo);
         printf("[8]. Eliminar publicacion por ubicacion \n");
         printf("[9]. Insertar publicacion por ubicacion \n");
         printf("[10]. Cerrar aplicacion\n");
-        printf("Seleccione una opción del 1 al 10: ");
+        printf("Seleccione una opcion del 1 al 10: ");
         scanf("%d", &opcion);
 
         switch (opcion) {
@@ -248,14 +248,17 @@ fclose(archivo);
             break;
         }
     }
-                printf("Imagen: ");
-                fgets(p.imagen, sizeof(p.imagen), stdin);
-                    for (i = 0; p.imagen[i] != '\0'; i++) {
-                    if (p.imagen[i] == '\n') {
-                    p.imagen[i] = '\0';
+                printf("Ingrese Imagenes todas separadas entre comas: ");
+                fgets(fotitos, sizeof(fotitos), stdin);
+                i = 0;
+                while (fotitos[i] != '\0') {
+                    if (fotitos[i] == '\n') {
+                    fotitos[i] = '\0';
             break;
         }
+        i++;
     }
+                sprintf(p.imagen, "[%s]", fotitos);
                 printf("Me gusta: ");
                 scanf("%d", &p.me_gusta);
                 printf("Comentarios: ");
@@ -285,14 +288,17 @@ fclose(archivo);
             break;
         }
     }
-                printf("Imagen: ");
-                fgets(p.imagen, sizeof(p.imagen), stdin);
-                    for (i = 0; p.imagen[i] != '\0'; i++) {
-                    if (p.imagen[i] == '\n') {
-                    p.imagen[i] = '\0';
+                printf("Ingrese Imagenes todas separadas entre comas: ");
+                fgets(fotitos, sizeof(fotitos), stdin);
+                i = 0;
+                while (fotitos[i] != '\0') {
+                    if (fotitos[i] == '\n') {
+                    fotitos[i] = '\0';
             break;
         }
+        i++;
     }
+                sprintf(p.imagen, "[%s]", fotitos);
                 printf("Me gusta: ");
                 scanf("%d", &p.me_gusta);
                 printf("Comentarios: ");
@@ -357,14 +363,17 @@ fclose(archivo);
             break;
         }
     }
-                printf("Imagen: ");
-                fgets(p.imagen, sizeof(p.imagen), stdin);
-                    for (i = 0; p.imagen[i] != '\0'; i++) {
-                    if (p.imagen[i] == '\n') {
-                    p.imagen[i] = '\0';
+                printf("Ingrese Imagenes todas separadas entre comas: ");
+                fgets(fotitos, sizeof(fotitos), stdin);
+                i = 0;
+                while (fotitos[i] != '\0') {
+                    if (fotitos[i] == '\n') {
+                fotitos[i] = '\0';
             break;
         }
+        i++;
     }
+                sprintf(p.imagen, "[%s]", fotitos);
                 printf("Me gusta: ");
                 scanf("%d", &p.me_gusta);
                 printf("Comentarios: ");
