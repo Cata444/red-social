@@ -56,36 +56,29 @@ void insertarFinal(nodo** cabeza, publicacion dato) {
 // 5. Eliminar el primero
 void eliminarPrimero(nodo** cabeza) {
     if (*cabeza == NULL) {
-        printf("Lista vacia, no hay nada que eliminar.\n");
+        printf("La lista se encuentra vacia.\n");
         return;
     }
-
     nodo* temp = *cabeza;
     *cabeza = (*cabeza)->siguiente;
-    printf("Eliminado el primer nodo con valor: %d\n", temp->dato);
     free(temp);
 }
 
 // 6. Eliminar el último
 void eliminarFinal(nodo** cabeza) {
     if (*cabeza == NULL) {
-        printf("No queda mas para eliminar \n");
+        printf("No queda mas para eliminar.\n");
         return;
     }
-
     if ((*cabeza)->siguiente == NULL) {
-        printf("Eliminado el unico nodo con valor: %d\n", (*cabeza)->dato);
         free(*cabeza);
         *cabeza = NULL;
         return;
     }
-
     nodo* actual = *cabeza;
     while (actual->siguiente->siguiente != NULL) {
         actual = actual->siguiente;
     }
-
-    printf("Eliminado el ultimo nodo con valor: %d\n", actual->siguiente->dato);
     free(actual->siguiente);
     actual->siguiente = NULL;
 }
@@ -95,71 +88,65 @@ void imprimirLista(nodo* cabeza) {
     nodo* temp = cabeza;
     printf("\n=== Lista de publicaciones ===\n");
     while (temp != NULL) {
-        printf("ID: %d | Nombre: %s | Titulo: %s | Imagen: %s\n", 
-               temp->dato.ID, temp->dato.nombre, temp->dato.titulo, temp->dato.imagen);
-        printf("Me gusta: %d | Comentarios: %d | Compartido: %d\n", 
-               temp->dato.me_gusta, temp->dato.comentario, temp->dato.compartido);
+        printf("___________________\n");
+        printf("ID: %d\n", temp->dato.ID);
+        printf("Nombre: %s\n", temp->dato.nombre);
+        printf("Título: %s\n", temp->dato.titulo);
+        printf("Imagen: %s\n", temp->dato.imagen);
+        printf("Me gusta: %d | Comentarios: %d | Compartido: %d\n",
+            temp->dato.me_gusta, temp->dato.comentario, temp->dato.compartido);
         printf("___________________\n");
         temp = temp->siguiente;
     }
 }
 
-// insertar en alguna cosa
-void insertarEnPosicion(nodo** cabeza, publicacion dato, int posicion) {
+// Insertar una publicacion por ubicacion
+void insertarPorUbicacion(nodo** cabeza, publicacion dato, int posicion) {
     nodo* nuevo = crearNodo(dato);
-
     if (posicion <= 1 || *cabeza == NULL) {
         nuevo->siguiente = *cabeza;
         *cabeza = nuevo;
         return;
     }
-
     nodo* actual = *cabeza;
     int i = 1;
     while (i < posicion - 1 && actual->siguiente != NULL) {
         actual = actual->siguiente;
         i++;
     }
-
     nuevo->siguiente = actual->siguiente;
     actual->siguiente = nuevo;
 }
 
-// eliminar por posicion 
-void eliminarEnPosicion(nodo** cabeza, int posicion) {
+// Eliminar una publicacion por ubicacion 
+void eliminarPorUbicacion(nodo** cabeza, int posicion) {
     if (*cabeza == NULL || posicion < 1) {
-        printf("Lista vacía o posición inválida.\n");
+        printf("La lista se encuentra vacia.\n");
         return;
     }
-
     nodo* temp;
-
     if (posicion == 1) {
         temp = *cabeza;
         *cabeza = (*cabeza)->siguiente;
         free(temp);
         return;
     }
-
     nodo* actual = *cabeza;
     int i = 1;
     while (i < posicion - 1 && actual->siguiente != NULL) {
         actual = actual->siguiente;
         i++;
     }
-
     if (actual->siguiente == NULL) {
-        printf("No existe esa posición.\n");
+        printf("La posicion no existe.\n");
         return;
     }
-
     temp = actual->siguiente;
     actual->siguiente = temp->siguiente;
     free(temp);
 }
 
-// mostrar publicacion ordenado por me gusta de mayor y menor
-
+// mostrar publicacion ordenado por "me gusta" de mayor y menor
 void ordenarPorMeGustamayor(nodo* cabeza) {
     int cambio;
     nodo* actual;
@@ -177,7 +164,7 @@ void ordenarPorMeGustamayor(nodo* cabeza) {
         }
     } while (cambio);
 }
-
+// mostrar publicacion ordenado por "me gusta" de menor a mayor
 void ordenarPorMeGustamenor(nodo* cabeza) {
     int cambio;
     nodo* actual;
@@ -196,102 +183,125 @@ void ordenarPorMeGustamenor(nodo* cabeza) {
     } while (cambio);
 }
 
+// iniciamos el programa
 int main() {
     nodo* cabeza = NULL;
     char linea[300];
-    int opcion;
+    int opcion, i;
     publicacion p;
 
-    FILE* archivo;
-
-archivo = fopen("status_ini_social_net.txt", "r");
-
+FILE* archivo = fopen("status_ini_social_net.txt", "r");
 if (archivo == NULL) {
     printf("No se pudo abrir el archivo\n");
     return 1;
 }
-
-while (!feof(archivo)) {
-    int resultado = fscanf(archivo, "%d; %99[^;]; %99[^;]; %99[^;]; [%d, %d, %d];\n",
-                           &p.ID, p.nombre, p.titulo, p.imagen,
-                           &p.me_gusta, &p.comentario, &p.compartido);
-
-    if (resultado == 7) {
-        insertarFinal(&cabeza, p);
-    } else {
-        fgets(linea, sizeof(linea), archivo);
-    }
+while (fscanf(archivo, "%d; %99[^;]; %99[^;]; %99[^;]; [%d, %d, %d];\n", //el 99 es para evitar desbordamiento, es un limitadorde lectura
+            &p.ID, p.nombre, p.titulo, p.imagen,
+            &p.me_gusta, &p.comentario, &p.compartido) == 7) {
+    insertarFinal(&cabeza, p);
+    printf("___________________\n");
+    printf("ID: %d\n", p.ID);
+    printf("Nombre: %s\n", p.nombre);
+    printf("Título: %s\n", p.titulo);
+    printf("Imagen: %s\n", p.imagen);
+    printf("Me gusta: %d | Comentarios: %d | Compartido: %d\n",
+        p.me_gusta, p.comentario, p.compartido);
+    printf("___________________\n");
 }
 
 fclose(archivo);
 
     do {
-        printf("\n── ✦ ── MENU RED SOCIAL ── ✦ ──\n");
-        printf("1. Añadir una publicacion al inicio\n");
-        printf("2. Añadir una publicacion al final\n");
-        printf("3. Quitar primera publicación\n");
-        printf("4. Quitar última publicación\n");
-        printf("5. Mostrar todas las publicaciones\n");
-        printf("6. Ordenar por 'me gusta' de manera ascendente\n");
-        printf("7. Ordenar por 'me gusta' de manera descendente\n");
-        printf("8. eliminar por orden \n");
-        printf("9. insertar por orden \n");
-        printf("10. cerrar aplicacion\n");
-        printf("Seleccione una opción: ");
+        printf("\n      MENU RED SOCIAL       \n");
+        printf("Bienvenido a esta red social, indiqueme la opcion que desea realizar: \n");
+        printf("[1]. Aniadir una publicacion al inicio\n");
+        printf("[2]. Aniadir una publicacion al final\n");
+        printf("[3]. Eliminar primera publicacion\n");
+        printf("[4]. Eliminar ultima publicacion\n");
+        printf("[5]. Mostrar todas las publicaciones\n");
+        printf("[6]. Ordenar por 'me gusta' de manera ascendente\n");
+        printf("[7]. Ordenar por 'me gusta' de manera descendente\n");
+        printf("[8]. Eliminar publicacion por ubicacion \n");
+        printf("[9]. Insertar publicacion por ubicacion \n");
+        printf("[10]. Cerrar aplicacion\n");
+        printf("Seleccione una opción del 1 al 10: ");
         scanf("%d", &opcion);
 
         switch (opcion) {
-case 1:
-    printf("ID: ");
-    scanf("%d", &p.ID);
+            case 1:
+                printf("ID: ");
+                scanf("%d", &p.ID);
+                getchar();
+                printf("Nombre: ");
+                fgets(p.nombre, sizeof(p.nombre), stdin);
+                    for (i = 0; p.nombre[i] != '\0'; i++) {
+                    if (p.nombre[i] == '\n') {
+                    p.nombre[i] = '\0';
+            break;
+        }
+    }
+                printf("Título: ");
+                fgets(p.titulo, sizeof(p.titulo), stdin);
+                    for (i = 0; p.titulo[i] != '\0'; i++) {
+                    if (p.titulo[i] == '\n') {
+                    p.titulo[i] = '\0';
+            break;
+        }
+    }
+                printf("Imagen: ");
+                fgets(p.imagen, sizeof(p.imagen), stdin);
+                    for (i = 0; p.imagen[i] != '\0'; i++) {
+                    if (p.imagen[i] == '\n') {
+                    p.imagen[i] = '\0';
+            break;
+        }
+    }
+                printf("Me gusta: ");
+                scanf("%d", &p.me_gusta);
+                printf("Comentarios: ");
+                scanf("%d", &p.comentario);
+                printf("Compartido: ");
+                scanf("%d", &p.compartido);
+                insertarInicio(&cabeza, p);
+            break;
 
-    printf("Nombre: ");
-    fgets(p.nombre, sizeof(p.nombre), stdin);
+            case 2:
+                printf("ID: ");
+                scanf("%d", &p.ID);
+                getchar();
+                printf("Nombre: "); 
+                fgets(p.nombre, sizeof(p.nombre), stdin);
+                    for (i = 0; p.nombre[i] != '\0'; i++) {
+                    if (p.nombre[i] == '\n') {
+                    p.nombre[i] = '\0';
+            break;
+        }
+    }
+                printf("Título: ");
+                fgets(p.titulo, sizeof(p.titulo), stdin);
+                    for (i = 0; p.titulo[i] != '\0'; i++) {
+                    if (p.titulo[i] == '\n') {
+                    p.titulo[i] = '\0';
+            break;
+        }
+    }
+                printf("Imagen: ");
+                fgets(p.imagen, sizeof(p.imagen), stdin);
+                    for (i = 0; p.imagen[i] != '\0'; i++) {
+                    if (p.imagen[i] == '\n') {
+                    p.imagen[i] = '\0';
+            break;
+        }
+    }
+                printf("Me gusta: ");
+                scanf("%d", &p.me_gusta);
+                printf("Comentarios: ");
+                scanf("%d", &p.comentario);
+                printf("Compartido: ");
+                scanf("%d", &p.compartido);
+                insertarFinal(&cabeza, p);
+            break;
 
-    printf("Título: ");
-    fgets(p.titulo, sizeof(p.titulo), stdin);
-
-    printf("Imagen: ");
-    fgets(p.imagen, sizeof(p.imagen), stdin);
-
-    printf("Me gusta: ");
-    scanf("%d", &p.me_gusta);
-
-    printf("Comentarios: ");
-    scanf("%d", &p.comentario);
-
-    printf("Compartido: ");
-    scanf("%d", &p.compartido);
-
-    insertarInicio(&cabeza, p);
-    printf("Publicación agregada al inicio.\n");
-    break;
-
-case 2:
-    printf("ID: ");
-    scanf("%d", &p.ID);
-
-    printf("Nombre: ");
-    fgets(p.nombre, sizeof(p.nombre), stdin);
-
-    printf("Título: ");
-    fgets(p.titulo, sizeof(p.titulo), stdin);
-
-    printf("Imagen: ");
-    fgets(p.imagen, sizeof(p.imagen), stdin);
-
-    printf("Me gusta: ");
-    scanf("%d", &p.me_gusta);
-
-    printf("Comentarios: ");
-    scanf("%d", &p.comentario);
-
-    printf("Compartido: ");
-    scanf("%d", &p.compartido);
-
-    insertarFinal(&cabeza, p);
-    printf("Publicación agregada al final.\n");
-    break;
             case 3:
                 eliminarPrimero(&cabeza);
                 break;
@@ -304,62 +314,75 @@ case 2:
                 imprimirLista(cabeza);
                 break;
 
-                
-case 6:
-        ordenarPorMeGustamenor(cabeza);
-    printf("Ordenar por 'me gusta' de manera ascendente\n");
-    imprimirLista(cabeza);
-    break;
+            case 6:
+                ordenarPorMeGustamenor(cabeza);
+                printf("Ordenado por 'me gusta' de manera ascendente\n");
+                imprimirLista(cabeza);
+                break;
 
-case 7:
-    ordenarPorMeGustamayor(cabeza);
-    printf("Ordenar por 'me gusta' de manera descendente\n");
-    imprimirLista(cabeza);
-    break;
+            case 7:
+                ordenarPorMeGustamayor(cabeza);
+                printf("Ordenado por 'me gusta' de manera descendente\n");
+                imprimirLista(cabeza);
+                break;
 
             case 8:
-    printf("Ingrese la posición a eliminar: ");
-    int posEliminar;
-    scanf("%d", &posEliminar);
-    eliminarEnPosicion(&cabeza, posEliminar);
-    break;
+                printf("Ingrese la ubicacion de la publicacion que desea eliminar: ");
+                int posEliminar;
+                scanf("%d", &posEliminar);
+                eliminarPorUbicacion(&cabeza, posEliminar);
+                break;
 
             case 9: {
                 int posInsertar;
-    printf("Ingrese la posición donde desea insertar: ");
-    scanf("%d", &posInsertar);
-
-    printf("ID: ");
-    scanf("%d", &p.ID);
-    getchar();
-
-    printf("Nombre: ");
-    fgets(p.nombre, sizeof(p.nombre), stdin);
-
-    printf("Título: ");
-    fgets(p.titulo, sizeof(p.titulo), stdin);
-
-    printf("Imagen: ");
-    fgets(p.imagen, sizeof(p.imagen), stdin);
-
-    printf("Me gusta: ");
-    scanf("%d", &p.me_gusta);
-    printf("Comentarios: ");
-    scanf("%d", &p.comentario);
-    printf("Compartido: ");
-    scanf("%d", &p.compartido);
-
-    insertarEnPosicion(&cabeza, p, posInsertar);
-    printf("Publicación insertada en la posición %d.\n", posInsertar);
-    break;}
-    case 10:
-    printf("Salir de la red social\n");
+                printf("Ingrese la ubicacion donde quiere insertar la publicacion: ");
+                scanf("%d", &posInsertar);
+                getchar();
+                printf("ID: ");
+                scanf("%d", &p.ID);
+                getchar();
+                printf("Nombre: ");
+                fgets(p.nombre, sizeof(p.nombre), stdin);
+                    for (i = 0; p.nombre[i] != '\0'; i++) {
+                    if (p.nombre[i] == '\n') {
+                    p.nombre[i] = '\0';
+            break;
+        }
+    }
+                printf("Título: ");
+                fgets(p.titulo, sizeof(p.titulo), stdin);
+                    for (i = 0; p.titulo[i] != '\0'; i++) {
+                    if (p.titulo[i] == '\n') {
+                    p.titulo[i] = '\0';
+            break;
+        }
+    }
+                printf("Imagen: ");
+                fgets(p.imagen, sizeof(p.imagen), stdin);
+                    for (i = 0; p.imagen[i] != '\0'; i++) {
+                    if (p.imagen[i] == '\n') {
+                    p.imagen[i] = '\0';
+            break;
+        }
+    }
+                printf("Me gusta: ");
+                scanf("%d", &p.me_gusta);
+                printf("Comentarios: ");
+                scanf("%d", &p.comentario);
+                printf("Compartido: ");
+                scanf("%d", &p.compartido);
+                insertarPorUbicacion(&cabeza, p, posInsertar);
+            break;
+}
+            case 10:
+                printf("Salir de la red social\n");
+                break;
             default:
-                printf("Indique una opción valida\n");
+                printf("Opcion invalida\n");
                 break;
         }
     } while (opcion != 10);
 
-    return 0;
+return 0;
 }
 
